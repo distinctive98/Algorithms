@@ -11,6 +11,14 @@ class Node {
 		this.n = n;
 		c = new LinkedList<Node>();
 	}
+
+	public int getDepth() {
+		return depth;
+	}
+
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}
 }
 
 class Graph {
@@ -20,11 +28,14 @@ class Graph {
 class Solution {
 	Graph g;
 	Queue<Node> q = new LinkedList<Node>();
+	HashMap<Integer, Integer> result = new HashMap<>();
 	boolean[] isVisit;
+	int maxDepth;
 	
 	
 	public int solution(int n, int[][] edge) {
-    	g = new Graph();
+    	//그래프 세팅
+		g = new Graph();
     	g.nodes = new Node[n+1];
     	for(int i=0; i<=n; i++) {
     		g.nodes[i] = new Node(i);
@@ -37,24 +48,54 @@ class Solution {
     		g.nodes[u].c.add(g.nodes[v]);
     	}
     	
-    	//for(int i=0; i<g.nodes.length; i++) {
-    	//	System.out.println(g.nodes[i].c.size());
-    	//}
-    	
+    	//bfs를 위한 초기세팅들
     	isVisit = new boolean[n+1];
     	q.add(g.nodes[1]);
+    	g.nodes[1].setDepth(1);
+    	isVisit[1] = true;
+    	result.put(1, 1);
+    	maxDepth = 1;
+    	bfs();
     	
-        int answer = 0;
+		/*
+		 * Iterator iterator = result.keySet().iterator(); while(iterator.hasNext()) {
+		 * int temp = (int) iterator.next(); System.out.println(temp + " = " +
+		 * result.get(temp)); }
+		 */
+    	
+        int answer = result.get(maxDepth);
         return answer;
     }
 	
-	public void bfs(Node node, int target, int depth) {
-		if(node.n == target) {
-			return;
+	public void bfs() {
+		while(!q.isEmpty()) {
+			Node temp = q.poll();
+			int depth = temp.getDepth()+1;
+			//해당 node의 자식들 queue에 넣고
+			//자식들의 depth 지정하고
+			//HashMap에 depth를 카운트하고
+			//maxDepth 갱신
+			for(Node node : temp.c) {
+				if(!isVisit[node.n]) {
+					q.add(node);
+					node.setDepth(depth);
+					isVisit[node.n] = true;
+					//HashMap 저장
+					if(maxDepth <= depth) {
+						if(result.containsKey(depth)) {
+							result.put(depth, result.get(depth)+1);
+						} else {
+							result.put(depth, 1);
+						}
+						if(maxDepth < depth) {
+							maxDepth = depth;
+						}
+					}
+					
+					//System.out.println(node.n + ":" + depth);
+				}
+			}
 		}
-		
-		bfs(node.c.get(depth), target, depth+1);
-		return;
 	}
 }
 
@@ -65,7 +106,7 @@ public class TheFarthestNode {
 		int n = 6;
 		int[][] edge = {{3, 6}, {4, 3}, {3, 2}, {1, 3}, {1, 2}, {2, 4}, {5, 2}};
 		Solution s = new Solution();
-		s.solution(n, edge);
+		int answer = s.solution(n, edge);
+		System.out.println(answer);
 	}
-
 }
