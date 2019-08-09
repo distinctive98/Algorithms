@@ -4,71 +4,44 @@
 
 package practice22;
 
-import java.util.*;
+class Solution {
+	int[] m;
 
-class Node implements Comparable<Node>{
-	int index;
-	int money;
-	public Node(int index, int money) {
-		this.index = index;
-		this.money = money;
+	// top-down
+	public int solution(int[] money) {
+		m = money;
+		//stealMoney(0, money.length - 2);
+		//stealMoney(1, money.length-1);
+		//return 0;
+		return Math.max(stealMoney(0, money.length-2), stealMoney(1,money.length-1));
 	}
-	public int getIndex() {
-		return index;
-	}
-	public int getMoney() {
+
+	public int stealMoney(int start, int end) {
+		int money = m[start];
+		while (end==m.length-1 ? start < end-1 : start < end) {
+			if(start+2 <= end) {
+				int sum1 = m[start] + m[start + 2];
+				int sum2 = m[start] + m[start + 3 >= end ? start + 2 : start + 3];
+				if (sum1 >= sum2) {
+					start += 2;
+				} else {
+					start += 3;
+				}
+			}
+			money += m[start];
+			//System.out.println(money);
+			
+		}
+
 		return money;
 	}
-	
-	@Override
-	public int compareTo(Node o) {
-		int target = o.getMoney();
-		if(target == money)
-			return 0;
-		else if(target > money) 
-			return 1;
-		else
-			return -1;
-	}
-}
-
-class Solution {
-	Node[] node;
-	int length;
-	
-	public int solution(int[] money) {
-        length = money.length;
-		node = new Node[length];
-		
-		for(int i=0; i<length; i++) {
-			node[i] = new Node(i, money[i]);
-		}
-		
-		Arrays.sort(node);
-		
-		//for(Node temp : node) {
-		//	System.out.println(temp.getMoney());
-		//}
-		
-		int answer = node[0].getMoney();
-		int preIndex = node[0].getIndex();
-		int curIndex;
-		for(int i=1; i<length; i++) {
-			curIndex = node[i].getIndex(); 
-			if(!(curIndex==0&&preIndex==length-1) && !(curIndex==length-1&&preIndex==0) && curIndex != preIndex-1 && curIndex != preIndex+1) {
-				answer += node[i].getMoney();
-			}
-		}
-		
-        return answer;
-    }
 }
 
 public class Stealing {
 
 	public static void main(String[] args) {
-		int[] money = {1, 2, 3, 1};
-		
+		int[] money = {1,2,3,1};
+
 		Solution s = new Solution();
 		int answer = s.solution(money);
 		System.out.println(answer);
