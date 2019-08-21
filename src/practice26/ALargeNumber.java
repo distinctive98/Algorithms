@@ -43,7 +43,7 @@ class Solution {
 public class ALargeNumber {
 
 	public static void main(String[] args) {
-		String number = "4177252841";
+		String number = "999999999";
 		int k = 4;
 
 		Solution s = new Solution();
